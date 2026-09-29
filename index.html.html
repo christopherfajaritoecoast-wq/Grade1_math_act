@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BrightSteps Grade 1</title><link rel="icon" href="data:,">
+<style>
+:root{--c:#6C5CE7;--bg:#FFF8E7;--ink:#2D2A4A;--card:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1f1d36;--ink:#fff;--card:#302d52}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Baloo 2","Comic Sans MS","Trebuchet MS",sans-serif;font-size:20px}
+#app{max-width:820px;margin:auto;padding:14px 14px 96px}
+h1,h2,h3{margin:.3em 0}.card{background:var(--card);border-radius:26px;padding:16px;box-shadow:0 5px 0 rgba(0,0,0,.12);margin:12px 0}
+.btn{font:inherit;font-weight:800;border:0;border-radius:22px;background:var(--c);color:#fff;padding:14px 22px;min-height:56px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.25);transition:transform .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.25)}.btn:focus-visible,.opt:focus-visible,.sub:focus-visible{outline:5px solid #FFB400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.sub{font:inherit;border:0;border-radius:28px;padding:18px 8px;color:#fff;font-weight:800;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.25);animation:pop .5s both}.sub .e{font-size:54px;display:block}
+.stats{display:flex;gap:8px;flex-wrap:wrap}.stat{flex:1;min-width:90px;background:var(--card);border-radius:20px;padding:10px;text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.1)}.stat b{font-size:28px;display:block}
+.bar{background:rgba(120,120,120,.25);border-radius:20px;height:22px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#00B894,#FDCB6E);border-radius:20px;transition:width .6s}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}.opt{font:inherit;font-size:30px;font-weight:800;border:4px solid var(--c);background:var(--card);color:var(--ink);border-radius:24px;min-height:80px;cursor:pointer}
+.opt.ok{background:#55EFC4;color:#000;animation:pop .4s}.opt.no{background:#FFEAA7;color:#000}
+.big{font-size:64px;text-align:center;line-height:1.2;word-break:break-word}.fb{font-size:26px;font-weight:800;text-align:center;min-height:40px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:6px;background:var(--card);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 12px rgba(0,0,0,.15)}
+nav button{font:inherit;font-size:14px;font-weight:800;border:0;background:none;color:var(--ink);min-width:60px;min-height:56px;border-radius:16px;cursor:pointer}nav button b{display:block;font-size:26px}nav .on{background:var(--c);color:#fff}
+.mascot{font-size:70px;animation:bob 2s infinite}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mem{aspect-ratio:1;font-size:40px;border:0;border-radius:18px;background:var(--c);color:#fff;cursor:pointer}.mem.f{background:var(--card);color:var(--ink);border:4px solid var(--c)}
+.sw{width:56px;height:56px;border-radius:50%;border:4px solid #fff;cursor:pointer;box-shadow:0 0 0 2px #888}
+canvas{width:100%;background:#fff;border-radius:20px;touch-action:none;border:4px dashed var(--c)}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}@keyframes bob{50%{transform:translateY(-10px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body><div id="app"></div><nav id="nav"></nav>
+<script>
+const Q=(q,o,a,e)=>({q,o,a,e});
+const SUBJ=[
+{id:'math',n:'Math',e:'🔢',c:'#0984E3',L:[
+{id:'m1',t:'Counting',e:'🍎',Q:[Q('How many?',['3','4','5','6'],'4','🍎🍎🍎🍎'),Q('How many?',['2','7','5','9'],'5','⭐⭐⭐⭐⭐'),Q('How many?',['6','8','7','9'],'7','🐟🐟🐟🐟🐟🐟🐟')]},
+{id:'m2',t:'Adding',e:'➕',Q:[Q('1 + 1 = ?',['1','2','3','4'],'2','🍓+🍓'),Q('2 + 3 = ?',['4','6','5','3'],'5','🐥🐥 + 🐥🐥🐥'),Q('4 + 2 = ?',['6','5','7','8'],'6','🎈')]},
+{id:'m3',t:'Subtracting',e:'➖',Q:[Q('5 − 2 = ?',['2','3','4','1'],'3','🍪'),Q('4 − 1 = ?',['2','3','5','1'],'3','🦋'),Q('6 − 3 = ?',['3','4','2','9'],'3','🌼')]},
+{id:'m4',t:'Shapes',e:'🔺',Q:[Q('Which is a circle?',['🔵','🟥','🔺','⭐'],'🔵'),Q('Which is a triangle?',['🔺','🟦','🔴','⬛'],'🔺'),Q('Which is a square?',['🔴','🟩','🔺','⭕'],'🟩')]}]},
+{id:'eng',n:'English',e:'📚',c:'#E17055',L:[
+{id:'e1',t:'Alphabet',e:'🔤',Q:[Q('Which letter is first?',['A','M','Z','C'],'A'),Q('What comes after B?',['A','D','C','E'],'C'),Q('Which is a capital letter?',['b','G','k','t'],'G')]},
+{id:'e2',t:'Letter Sounds',e:'🔊',Q:[Q('Which starts with B?',['🐱','🐶','🐻','🐸'],'🐻'),Q('Which starts with S?',['☀️','🌙','⭐','🍎'],'☀️'),Q('Which starts with C?',['🐱','🐟','🐘','🦆'],'🐱')]},
+{id:'e3',t:'Sight Words',e:'👀',Q:[Q('Find the word "the"',['the','cat','you','and'],'the'),Q('Find the word "and"',['is','and','we','my'],'and'),Q('Find the word "you"',['you','can','see','go'],'you')]}]},
+{id:'sci',n:'Science',e:'🔬',c:'#00B894',L:[
+{id:'s1',t:'Animals',e:'🐘',Q:[Q('Which animal can fly?',['🐦','🐟','🐢','🐘'],'🐦'),Q('Which lives in water?',['🐄','🐟','🐕','🐓'],'🐟'),Q('Which says "moo"?',['🐄','🐑','🐷','🐈'],'🐄')]},
+{id:'s2',t:'Five Senses',e:'👂',Q:[Q('What do we see with?',['👀','👂','👃','👅'],'👀'),Q('What do we hear with?',['👀','👂','👃','✋'],'👂'),Q('What do we smell with?',['👃','👂','👅','👀'],'👃')]},
+{id:'s3',t:'Weather',e:'🌦️',Q:[Q('Which is sunny?',['☀️','🌧️','❄️','🌪️'],'☀️'),Q('What do you use when it rains?',['☂️','🕶️','🧤','🩴'],'☂️'),Q('Which plant grows from a seed?',['🌱','🪨','🧸','⚽'],'🌱')]}]},
+{id:'fil',n:'Filipino',e:'🇵🇭',c:'#D63031',L:[
+{id:'f1',t:'Patinig',e:'🅰️',Q:[Q('Alin ang patinig?',['A','B','K','D'],'A'),Q('Alin ang patinig?',['M','E','S','T'],'E'),Q('Alin ang katinig?',['O','I','P','U'],'P')]},
+{id:'f2',t:'Simpleng Salita',e:'🗣️',Q:[Q('Ano ito?',['aso','bola','bahay','mesa'],'aso','🐶'),Q('Ano ito?',['araw','buwan','ulan','ilog'],'araw','☀️'),Q('Ano ito?',['isda','ibon','baka','pusa'],'isda','🐟')]}]},
+{id:'val',n:'Good Values',e:'❤️',c:'#E84393',L:[
+{id:'v1',t:'Kindness',e:'🤝',Q:[Q('A friend fell down. What do you do?',['Help them','Laugh','Walk away'],'Help them','🤕'),Q('You have 2 cookies and a friend has none.',['Share','Hide them','Eat both'],'Share','🍪'),Q('Which is kind?',['Saying please','Grabbing','Shouting'],'Saying please','🙏')]},
+{id:'v2',t:'Honesty & Care',e:'🧼',Q:[Q('You broke a cup. What do you say?',['The truth','A lie','Nothing'],'The truth','🥛'),Q('Where does trash go?',['In the bin','On the floor','Under the bed'],'In the bin','🗑️'),Q('Before eating we...',['Wash hands','Run','Sleep'],'Wash hands','🧼')]}]},
+{id:'art',n:'Arts',e:'🎨',c:'#FDCB6E',L:[
+{id:'a1',t:'Colors & Patterns',e:'🌈',Q:[Q('Red + Yellow = ?',['Orange','Purple','Green','Blue'],'Orange','🟥🟨'),Q('What comes next? 🔴🔵🔴🔵🔴',['🔵','🔴','🟢','🟡'],'🔵'),Q('What comes next? 🔺🔺🟦🔺🔺',['🟦','🔺','⭕','⭐'],'🟦')]}]}];
+const STORY=[{id:'st1',t:'Pip the Puppy',e:'🐶',s:['Pip is a small dog.','Pip likes to run.','Pip sees a red ball.','Pip has fun!'],Q:[Q('Who is the story about?',['Pip the dog','A cat','A bird'],'Pip the dog','🐶'),Q('What color is the ball?',['Red','Blue','Green'],'Red','⚽')]},
+{id:'st2',t:'Lita and the Sun',e:'🌞',s:['Lita wakes up early.','The sun is up.','She waters the plant.','The plant will grow!'],Q:[Q('What does Lita water?',['A plant','A dog','A car'],'A plant','🌱'),Q('When does Lita wake up?',['Early','Late','Never'],'Early','⏰')]}];
+const AVS=['🦊','🐼','🐯','🐸','🦄','🐙','🦁','🐧'],COLS=['#6C5CE7','#0984E3','#00B894','#E84393','#E17055'];
+const LES={};SUBJ.forEach(s=>s.L.forEach(l=>LES[l.id]={...l,s}));STORY.forEach(l=>LES[l.id]={...l,s:{id:'read',c:'#6C5CE7'}});
+const ALLQ=[...SUBJ.flatMap(s=>s.L.map(l=>l.id)),...STORY.map(s=>s.id)];
+const BADGES=[['🌟','First Lesson',s=>Object.keys(s.done).length>0],['📚','Reading Explorer',s=>s.done.st1||s.done.st2],['🔢','Number Champion',s=>['m1','m2','m3','m4'].every(i=>s.done[i])],['🔬','Young Scientist',s=>['s1','s2','s3'].every(i=>s.done[i])],['🎨','Creative Artist',s=>s.done.a1||s.drew],['❤️','Kindness Star',s=>['v1','v2'].every(i=>s.done[i])],['🏆','Learning Superstar',s=>ALLQ.every(i=>s.done[i])]];
+const today=()=>new Date().toISOString().slice(0,10);
+let S={name:'Little Learner',av:'🦊',col:COLS[0],pts:0,stars:0,badges:[],done:{},scores:{},streak:0,last:'',days:{},drew:false};
+try{Object.assign(S,JSON.parse(localStorage.getItem('bs1')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('bs1',JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id),app=$('app');let view='home',arg=null,Z={};
+const say=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=.8;speechSynthesis.speak(u)}catch(e){}};
+const shuf=a=>[...a].sort(()=>Math.random()-.5);
+const pct=()=>Math.round(Object.keys(S.done).length/ALLQ.length*100);
+const bar=p=>`<div class="bar" role="progressbar" aria-valuenow="${p}"><i style="width:${p}%"></i></div>`;
+function go(v,a){view=v;arg=a;Z={};render();scrollTo(0,0)}
+function render(){document.documentElement.style.setProperty('--c',S.col);
+$('nav').innerHTML=[['home','🏠','Home'],['games','🎮','Games'],['read','📖','Read'],['prog','🏅','Progress'],['me','😊','Me'],['parent','👪','Parents']].map(([k,i,t])=>`<button class="${view==k?'on':''}" onclick="go('${k}')"><b>${i}</b>${t}</button>`).join('');
+app.innerHTML=V[view]();if(view=='quiz')ask();if(view=='draw')initDraw();if(view=='mem')memInit()}
+const V={
+home(){const d=Object.keys(S.days).filter(k=>k==today());const plan=['e1','m1','s1'].map((x,i)=>['e2','m2','s2','e3','m3','s3'][(new Date().getDate()+i)%2?i:i+3]);
+return`<div class="row"><span class="mascot">${S.av}</span><div><h1>Hi, ${S.name}! 🌟</h1><div>Ready to learn today?</div></div></div>
+<div class="stats"><div class="stat"><b>🔥${S.streak}</b>Day streak</div><div class="stat"><b>💎${S.pts}</b>Points</div><div class="stat"><b>⭐${S.stars}</b>Stars</div><div class="stat"><b>🏅${S.badges.length}</b>Badges</div></div>
+<div class="card"><b>My progress: ${pct()}%</b>${bar(pct())}</div>
+<div class="card"><h2>📅 Today's Learning</h2>${plan.map(id=>{const l=LES[id],ok=S.days[today()+id];return`<button class="btn" style="width:100%;margin:5px 0;background:${l.s.c}" onclick="go('quiz','${id}')">${ok?'✅':l.s.e} ${l.s.n} — ${l.t}</button>`}).join('')}</div>
+<h2>Pick a subject</h2><div class="grid">${SUBJ.map((s,i)=>`<button class="sub" style="background:${s.c};animation-delay:${i*.07}s" onclick="go('sub','${s.id}')"><span class="e">${s.e}</span>${s.n}</button>`).join('')}</div>`},
+sub(){const s=SUBJ.find(x=>x.id==arg);return`<button class="btn" onclick="go('home')">⬅ Back</button><h1>${s.e} ${s.n}</h1>${s.L.map(l=>`<div class="card row" style="justify-content:space-between"><span style="font-size:32px">${l.e} ${l.t}</span><span>${'⭐'.repeat(S.done[l.id]||0)||''}<button class="btn" onclick="go('quiz','${l.id}')">Play ▶</button></span></div>`).join('')}${s.id=='art'?`<div class="card"><h3>✏️ Free drawing</h3><button class="btn" onclick="go('draw')">Draw! 🎨</button></div>`:''}`},
+quiz(){return`<button class="btn" onclick="go('home')">✖ Stop</button><div class="card"><div id="qbox"></div></div>`},
+read(){if(arg){const st=LES[arg];return`<button class="btn" onclick="go('read')">⬅ Back</button><h1>${st.e} ${st.t}</h1><p>Tap a sentence to hear it!</p>${st.s.map(x=>`<div class="card big" style="font-size:38px;cursor:pointer" tabindex="0" onclick="say('${x}');this.style.outline='5px solid #FFB400'" onkeydown="if(event.key=='Enter')this.click()">${x}</div>`).join('')}<button class="btn" style="width:100%" onclick="go('quiz','${st.id}')">Questions ▶</button>`}
+return`<h1>📖 Reading Corner</h1>${STORY.map(x=>`<div class="card row" style="justify-content:space-between"><span style="font-size:32px">${x.e} ${x.t}</span><button class="btn" onclick="go('read','${x.id}')">${S.done[x.id]?'⭐ ':''}Read</button></div>`).join('')}`},
+games(){return`<h1>🎮 Game Center</h1><div class="grid"><button class="sub" style="background:#6C5CE7" onclick="go('mem')"><span class="e">🃏</span>Memory Cards</button><button class="sub" style="background:#00B894" onclick="go('count')"><span class="e">🔢</span>Counting Game</button><button class="sub" style="background:#E17055" onclick="go('draw')"><span class="e">🎨</span>Draw</button></div>`},
+count(){const n=1+Math.floor(Math.random()*9),em=shuf(['🍎','🐥','⭐','🚗','🌸'])[0];Z.n=n;const o=shuf([n,n+1,Math.max(1,n-1)+(n==1?2:0),n+2]).filter((v,i,a)=>a.indexOf(v)==i).slice(0,4);
+return`<button class="btn" onclick="go('games')">⬅ Back</button><div class="card"><h2>Count them all!</h2><div class="big">${em.repeat(n)}</div><div class="opts" style="margin-top:14px">${o.map(v=>`<button class="opt" onclick="cnt(this,${v})">${v}</button>`).join('')}</div><div class="fb" id="fb"></div><button class="btn" onclick="go('count')">Next ▶</button></div>`},
+mem(){return`<button class="btn" onclick="go('games')">⬅ Back</button><div class="card"><h2>Find the pairs! <span id="mv"></span></h2><div class="grid" style="grid-template-columns:repeat(4,1fr)" id="mg"></div><div class="fb" id="fb"></div></div>`},
+draw(){return`<button class="btn" onclick="go('games')">⬅ Back</button><div class="card"><h2>🎨 Draw!</h2><canvas id="cv" width="700" height="450"></canvas><div class="row" style="margin-top:10px">${['#D63031','#0984E3','#00B894','#FDCB6E','#6C5CE7','#2D2A4A'].map(c=>`<span class="sw" tabindex="0" style="background:${c}" onclick="Z.pen=this.style.background"></span>`).join('')}<button class="btn" onclick="initDraw()">🧽 Clear</button></div></div>`},
+prog(){const sc=Object.entries(S.scores);return`<h1>🏅 My Progress</h1><div class="stats"><div class="stat"><b>${Object.keys(S.done).length}/${ALLQ.length}</b>Lessons</div><div class="stat"><b>⭐${S.stars}</b>Stars</div><div class="stat"><b>🔥${S.streak}</b>Streak</div></div>
+<div class="card"><b>Overall ${pct()}%</b>${bar(pct())}</div><div class="card"><h2>Subjects</h2>${SUBJ.map(s=>{const p=Math.round(s.L.filter(l=>S.done[l.id]).length/s.L.length*100);return`<div>${s.e} ${s.n} ${p}%${bar(p)}</div>`}).join('')}</div>
+<div class="card"><h2>Badges</h2><div class="grid">${BADGES.map(b=>`<div class="stat" style="${S.badges.includes(b[1])?'':'opacity:.3;filter:grayscale(1)'}"><b>${b[0]}</b>${b[1]}</div>`).join('')}</div></div>`},
+me(){return`<h1>😊 My Space</h1><div class="card"><label>My name<br><input id="nm" value="${S.name}" maxlength="14" style="font:inherit;font-size:26px;padding:10px;border-radius:16px;border:3px solid var(--c);width:100%" oninput="S.name=this.value||'Little Learner';save()"></label></div>
+<div class="card"><h3>My friend</h3><div class="row">${AVS.map(a=>`<button class="opt" style="width:76px;font-size:40px;${S.av==a?'background:#FFEAA7':''}" onclick="S.av='${a}';save();render()">${a}</button>`).join('')}</div></div>
+<div class="card"><h3>Favorite color</h3><div class="row">${COLS.map(c=>`<span class="sw" tabindex="0" role="button" aria-label="color" style="background:${c}" onclick="S.col='${c}';save();render()" onkeydown="if(event.key=='Enter')this.click()"></span>`).join('')}</div></div>`},
+parent(){const rows=Object.keys(LES).map(id=>({id,l:LES[id],sc:S.scores[id]}));const weak=rows.filter(r=>r.sc!=null&&r.sc<70);const todo=SUBJ.filter(s=>s.L.some(l=>!S.done[l.id]));
+return`<h1>👪 Parent / Teacher View</h1><p>For grown-ups: ${S.name}'s learning summary.</p><div class="stats"><div class="stat"><b>${Object.keys(S.done).length}</b>Lessons done</div><div class="stat"><b>${S.stars}</b>Stars</div><div class="stat"><b>${S.streak}</b>Day streak</div><div class="stat"><b>${S.badges.length}</b>Badges</div></div>
+<div class="card"><h2>Quiz results</h2>${rows.filter(r=>r.sc!=null).map(r=>`<div>${r.l.e} ${r.l.t}: <b>${r.sc}%</b>${bar(r.sc)}</div>`).join('')||'No quizzes taken yet.'}</div>
+<div class="card"><h2>Needs more practice</h2>${weak.map(r=>`<div>⚠️ ${r.l.t} (${r.sc}%)</div>`).join('')||'Nothing yet — great!'}${todo.length?`<p>Not yet finished: ${todo.map(s=>s.n).join(', ')}</p>`:''}</div>
+<button class="btn" style="background:#D63031" onclick="if(confirm('Erase all progress?')){localStorage.removeItem('bs1');location.reload()}">Reset progress</button>`}};
+function ask(){const l=LES[arg];Z.i=Z.i||0;Z.ok=Z.ok||0;const q=l.Q[Z.i];if(!q){return finish(l)}
+$('qbox').innerHTML=`<div>${l.t} · ${Z.i+1}/${l.Q.length}</div>${bar(Z.i/l.Q.length*100)}<h2 style="font-size:30px">${q.q} <button class="btn" aria-label="Read aloud" onclick="say('${q.q.replace(/'/g,'')}')">🔊</button></h2>${q.e?`<div class="big">${q.e}</div>`:''}<div class="opts" style="margin-top:12px">${shuf(q.o).map(o=>`<button class="opt" onclick="pick(this,'${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div><div class="fb" id="fb"></div>`}
+function pick(b,v){const q=LES[arg].Q[Z.i];if(Z.lock)return;if(v==q.a){Z.lock=1;b.classList.add('ok');Z.ok++;$('fb').textContent='Awesome! ⭐ You got it!';setTimeout(()=>{Z.lock=0;Z.i++;ask()},1300)}else{b.classList.add('no');b.disabled=true;$('fb').textContent='Nice try! Let’s learn this together 😊 Try again!'}}
+function finish(l){const n=l.Q.length,st=Z.ok>=n?3:Z.ok>=n-1?2:1,p=Math.round(Z.ok/n*100);S.stars+=Math.max(0,st-(S.done[l.id]||0));S.pts+=Z.ok*10+10;S.done[l.id]=Math.max(S.done[l.id]||0,st);S.scores[l.id]=Math.max(S.scores[l.id]||0,p);S.days[today()+l.id]=1;
+if(S.last!=today()){const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last==y?S.streak+1:1;S.last=today()}
+const nb=BADGES.filter(b=>b[2](S)&&!S.badges.includes(b[1]));nb.forEach(b=>S.badges.push(b[1]));save();
+$('qbox').innerHTML=`<div class="big">🎉${'⭐'.repeat(st)}</div><h2 style="text-align:center">Great job, ${S.name}!</h2><p style="text-align:center">+${Z.ok*10+10} points</p>${nb.map(b=>`<div class="stat" style="animation:pop .6s"><b>${b[0]}</b>New badge: ${b[1]}!</div>`).join('')}<button class="btn" style="width:100%;margin-top:10px" onclick="go('home')">Home 🏠</button>`}
+function cnt(b,v){if(v==Z.n){b.classList.add('ok');$('fb').textContent='Awesome! ⭐ You got it!';if(!Z.got){Z.got=1;S.pts+=5;save()}}else{b.classList.add('no');$('fb').textContent='Nice try! Let’s count together 😊'}}
+function memInit(){const e=shuf(['🐶','🐱','🐸','🦋','🍎','⭐']);Z.c=shuf([...e,...e]);Z.o=[];Z.m=0;Z.mv=0;Z.lock=0;drawMem()}
+function drawMem(){$('mg').innerHTML=Z.c.map((c,i)=>`<button class="mem ${Z.o.includes(i)||Z.m_?.includes?.(i)||(Z.mt||[]).includes(i)?'f':''}" aria-label="card" onclick="flip(${i})">${Z.o.includes(i)||(Z.mt||[]).includes(i)?c:'?'}</button>`).join('');$('mv').textContent='Moves: '+Z.mv}
+function flip(i){if(Z.lock||Z.o.includes(i)||(Z.mt=Z.mt||[]).includes(i))return;Z.o.push(i);drawMem();if(Z.o.length==2){Z.mv++;Z.lock=1;const[a,b]=Z.o;setTimeout(()=>{if(Z.c[a]==Z.c[b]){Z.mt.push(a,b);if(Z.mt.length==12){$('fb').textContent='Awesome! ⭐ You found them all!';S.pts+=20;save()}}Z.o=[];Z.lock=0;drawMem()},800)}}
+function initDraw(){const c=$('cv');if(!c)return;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,700,450);Z.pen=Z.pen||'#D63031';let d=0;const p=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*700/r.width,(e.clientY-r.top)*450/r.height]};
+c.onpointerdown=e=>{d=1;const[a,b]=p(e);x.beginPath();x.moveTo(a,b);S.drew=1;save()};c.onpointermove=e=>{if(!d)return;const[a,b]=p(e);x.strokeStyle=Z.pen;x.lineWidth=12;x.lineCap='round';x.lineTo(a,b);x.stroke()};c.onpointerup=()=>{d=0;const nb=BADGES.filter(b=>b[2](S)&&!S.badges.includes(b[1]));nb.forEach(b=>S.badges.push(b[1]));save()}}
+render();
+</script></body></html>
